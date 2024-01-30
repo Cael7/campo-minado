@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Alert } from "react-native";
+import { StyleSheet, Text, View, Alert, Button } from "react-native";
 import params from "./src/params";
 import MineField from "./src/components/MineField";
 import {
@@ -42,14 +42,22 @@ export default class App extends Component {
 
     if (lost) {
       showMines(board);
-      Alert.alert("Perdeeeeu!", "Que Buuuuurro!");
+      Alert.alert("Perdeeeeu!", "Que Buuuuurro!", [
+        { text: "Reiniciar", onPress: () => this.resetGame() },
+      ]);
     }
 
     if (won) {
-      Alert.alert("Parabens!", "Voce venceu!!!");
+      Alert.alert("Parabens!", "Voce venceu!!!", [
+        { text: "Reiniciar", onPress: () => this.resetGame() },
+      ]);
     }
 
     this.setState({ board, lost, won });
+  };
+
+  resetGame = () => {
+    this.setState(this.createState());
   };
 
   render() {
@@ -62,6 +70,7 @@ export default class App extends Component {
         <View style={styles.board}>
           <MineField board={this.state.board} onOpenField={this.onOpenField} />
         </View>
+        <Button title="Começar Novamente" onPress={this.resetGame} />
         <StatusBar style="auto" />
       </View>
     );

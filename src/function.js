@@ -42,31 +42,33 @@ const createMinedBoard = (rows, columns, minesAmount) => {
 
 const cloneBoard = (board) => {
   return board.map((rows) => {
-    return rows.maps((field) => {
+    return rows.map((field) => {
       return { ...field };
     });
   });
 };
 
 const getNeighbors = (board, row, column) => {
-  const neighbor = [];
-  const rows = [row - 1, column, column + 1];
-  rows.forEac((c) => {
+  const neighbors = [];
+  const rows = [row - 1, row, row + 1];
+  const columns = [column - 1, column, column + 1];
+
+  rows.forEach((r) => {
     columns.forEach((c) => {
-      const diferent = r !== row || c !== column;
+      const different = r !== row || c !== column;
       const validRow = r >= 0 && r < board.length;
       const validColumn = c >= 0 && c < board[0].length;
-      if (diferent && validRow && valid) {
-        neighbor.push(board[r][c]);
+      if (different && validRow && validColumn) {
+        neighbors.push(board[r][c]);
       }
     });
   });
 
-  return neighbor;
+  return neighbors;
 };
 
 const safeNeighborhood = (board, row, column) => {
-  const safes = (result, neightbor) => result && !neighbor.mined;
+  const safes = (result, neighbor) => result && !neighbor.mined;
   return getNeighbors(board, row, column).reduce(safes, true);
 };
 
@@ -82,7 +84,7 @@ const openField = (board, row, column) => {
       );
     } else {
       const neighbors = getNeighbors(board, row, column);
-      field.nearMines = neighbors.filter((n) => n.minedd).length;
+      field.nearMines = neighbors.filter((n) => n.mined).length;
     }
   }
 };
@@ -90,9 +92,9 @@ const openField = (board, row, column) => {
 const fields = (board) => [].concat(...board);
 const hadExplosion = (board) =>
   fields(board).filter((field) => field.exploded).length > 0;
-const pendding = (field) =>
+const pending = (field) =>
   (field.mined && !field.flagged) || (!field.mined && !field.opened);
-const wonGame = (board) => fields(board).fielter(pendding).length === 0;
+const wonGame = (board) => fields(board).filter(pending).length === 0;
 const showMines = (board) =>
   fields(board)
     .filter((field) => field.mined)

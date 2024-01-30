@@ -1,10 +1,16 @@
 import React, { Component } from "react";
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Alert } from "react-native";
 import params from "./src/params";
-import Flag from "./src/components/Flag";
 import MineField from "./src/components/MineField";
-import { createMinedBoard } from "./src/function";
+import {
+  createMinedBoard,
+  cloneBoard,
+  openField,
+  hadExplosion,
+  wonGame,
+  showMines,
+} from "./src/function";
 
 export default class App extends Component {
   constructor(props) {
@@ -23,7 +29,27 @@ export default class App extends Component {
     const rows = params.getRowsAmount();
     return {
       board: createMinedBoard(rows, cols, this.minesAmount()),
+      won: false,
+      lost: false,
     };
+  };
+
+  onOpenField = (row, column) => {
+    const board = cloneBoard(this.state.board);
+    openField(board, row, column);
+    const lost = hadExplosion(board);
+    const won = wonGame(board);
+
+    if (lost) {
+      showMines(board);
+      Alert.alert("Perdeeeeu!", "Que Buuuuurro!");
+    }
+
+    if (won) {
+      Alert.alert("Parabens!", "Voce venceu!!!");
+    }
+
+    this.setState({ board, lost, won });
   };
 
   render() {
@@ -34,8 +60,9 @@ export default class App extends Component {
           Tamanho da Grade: {params.getRowsAmount()}x{params.getColumnsAmount()}
         </Text>
         <View style={styles.board}>
-          <MineField board={this.state.board} />
+          <MineField board={this.state.board} onOpenField={this.onOpenField} />
         </View>
+        <StatusBar style="auto" />
       </View>
     );
   }
@@ -49,5 +76,15 @@ const styles = StyleSheet.create({
   board: {
     alignItems: "center",
     backgroundColor: "#AAA",
+  },
+  welcome: {
+    fontSize: 20,
+    textAlign: "center",
+    margin: 10,
+  },
+  instructions: {
+    textAlign: "center",
+    color: "#333333",
+    marginBottom: 5,
   },
 });

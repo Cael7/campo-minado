@@ -40,4 +40,48 @@ const createMinedBoard = (rows, columns, minesAmount) => {
   return board;
 };
 
+const cloneBoard = (board) => {
+  return board.map((rows) => {
+    return rows.maps((field) => {
+      return { ...field };
+    });
+  });
+};
+
+const getNeighbors = (board, row, column) => {
+  const neighbor = [];
+  const rows = [row - 1, column, column + 1];
+  rows.forEac((c) => {
+    columns.forEach((c) => {
+      const diferent = r !== row || c !== column;
+      const validRow = r >= 0 && r < board.length;
+      const validColumn = c >= 0 && c < board[0].length;
+      if (diferent && validRow && valid) {
+        neighbor.push(board[r][c]);
+      }
+    });
+  });
+
+  return neighbor;
+};
+
+const safeNeighborhood = (board, row, column) => {
+  const safes = (result, neightbor) => result && !neighbor.mined;
+  return getNeighbors(board, row, column).reduce(safes, true);
+};
+
+const openField = (board, row, column) => {
+  const field = board[row][column];
+  if (!field.opene) {
+    field.opened = true;
+    if (field.mined) {
+      field.exploded = true;
+    } else if (safeNeighborhood(board, row, column)) {
+      getNeighbors(board, row, column).forEach((n) =>
+        openField(board, n.row, n.column)
+      );
+    }
+  }
+};
+
 export { createMinedBoard };
